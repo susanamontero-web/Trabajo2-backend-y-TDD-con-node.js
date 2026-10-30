@@ -160,6 +160,34 @@ test('el repositorio usa parámetros para buscar, insertar, actualizar y elimina
   assert.deepEqual(eliminacion.valores, [1]);
 });
 
+test('acepta los límites exactos de longitud en POST y PUT', async () => {
+  const { api, repository } = preparar();
+  const limites = {
+    ...datos, asunto: 'a'.repeat(150), solicitante: 's'.repeat(100),
+    descripcion: 'd'.repeat(2000)
+  };
+  await api.post('/api/tickets').send(limites).expect(201);
+  await api.put('/api/tickets/1').send(limites).expect(200);
+  assert.deepEqual(repository.crear.mock.calls[0].arguments[0], limites);
+  assert.deepEqual(repository.actualizar.mock.calls[0].arguments[1], limites);
+});
+
+test('responde la preconsulta CORS para editar y eliminar desde Angular', async () => {
+  const { api, repository } = preparar();
+  for (const metodo of ['PUT', 'DELETE']) {
+    const respuesta = await api.options('/api/tickets/1')
+      .set('Origin', 'http://localhost:4200')
+      .set('Access-Control-Request-Method', metodo)
+      .set('Access-Control-Request-Headers', 'content-type')
+      .expect(204);
+    assert.equal(respuesta.headers['access-control-allow-origin'], 'http://localhost:4200');
+    assert.ok(respuesta.headers['access-control-allow-methods'].includes(metodo));
+    assert.ok(respuesta.headers['access-control-allow-headers'].includes('content-type'));
+  }
+  assert.equal(repository.actualizar.mock.callCount(), 0);
+  assert.equal(repository.eliminar.mock.callCount(), 0);
+});
+
 test('el repositorio identifica registros inexistentes', async () => {
   const repository = crearTicketsRepository({
     async execute(sql) {
