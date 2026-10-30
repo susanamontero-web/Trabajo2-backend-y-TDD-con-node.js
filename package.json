@@ -1,0 +1,17 @@
+{
+  "name": "soporte-tecnico",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sistema de gestión de tickets de soporte técnico",
+  "scripts": {
+    "install:all": "npm --prefix backend ci && npm --prefix frontend ci",
+    "start:frontend": "npm --prefix frontend start",
+    "start:backend": "npm --prefix backend start",
+    "dev:backend": "npm --prefix backend run dev",
+    "build": "npm --prefix frontend run build",
+    "test:backend": "npm --prefix backend test"
+  },
+  "engines": {
+    "node": ">=24.15.0 <25"
+  }
+}
