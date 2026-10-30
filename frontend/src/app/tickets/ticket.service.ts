@@ -5,7 +5,7 @@ import { Ticket, TicketData } from './ticket';
 @Injectable({ providedIn: 'root' })
 export class TicketService {
   private http = inject(HttpClient);
-  private url = 'http://localhost:3000/api/tickets';
+  private url = '/api/tickets';
 
   listar() { return this.http.get<Ticket[]>(this.url); }
   obtener(id: number) { return this.http.get<Ticket>(this.url + '/' + id); }

@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
+    "db:init": "node scripts/init-db.js",
+    "test:integration": "node --test integration/mysql.integration.js",
     "test": "node --test"
   },
   "dependencies": {

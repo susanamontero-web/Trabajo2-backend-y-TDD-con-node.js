@@ -7,7 +7,7 @@ import { TicketListComponent } from './ticket-list.component';
 import { TicketFormComponent } from './ticket-form.component';
 import { Ticket } from './ticket';
 
-const url = 'http://localhost:3000/api/tickets';
+const url = '/api/tickets';
 const ticket: Ticket = {
   id: 1, asunto: 'Falla de correo', solicitante: 'Susana',
   descripcion: 'No puedo ingresar al correo', categoria: 'Accesos',
