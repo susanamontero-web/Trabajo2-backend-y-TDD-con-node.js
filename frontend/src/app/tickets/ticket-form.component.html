@@ -1,0 +1,66 @@
+<a class="back-link" routerLink="/tickets">← Volver a tickets</a>
+<div class="page-heading">
+  <div>
+    <p class="eyebrow">SOLICITUD DE ATENCIÓN</p>
+    <h1>{{ id === null ? 'Nuevo ticket' : 'Editar ticket' }}</h1>
+    <p>Completa los datos de la solicitud. Todos los campos son obligatorios.</p>
+  </div>
+</div>
+@if (error()) { <p class="alert error" role="alert">{{ error() }}</p> }
+@if (cargando()) {
+  <p class="panel empty" role="status">Cargando ticket…</p>
+} @else if (!cargaFallida()) {
+  <form class="panel ticket-form" #formulario="ngForm" (ngSubmit)="guardar(formulario)" novalidate>
+    <fieldset [disabled]="guardando()">
+      <div class="field">
+        <label for="asunto">Asunto</label>
+        <input id="asunto" name="asunto" [(ngModel)]="ticket.asunto" #asunto="ngModel" required maxlength="150" placeholder="Ej.: No puedo acceder al correo" [attr.aria-invalid]="asunto.invalid && asunto.touched" aria-describedby="error-asunto">
+        @if (asunto.invalid && asunto.touched) {
+          <small class="field-error" id="error-asunto">Ingresa un asunto de hasta 150 caracteres.</small>
+        }
+      </div>
+      <div class="field">
+        <label for="solicitante">Solicitante</label>
+        <input id="solicitante" name="solicitante" [(ngModel)]="ticket.solicitante" #solicitante="ngModel" required maxlength="100" autocomplete="name" placeholder="Nombre de quien solicita ayuda" [attr.aria-invalid]="solicitante.invalid && solicitante.touched" aria-describedby="error-solicitante">
+        @if (solicitante.invalid && solicitante.touched) {
+          <small class="field-error" id="error-solicitante">Ingresa el nombre del solicitante, hasta 100 caracteres.</small>
+        }
+      </div>
+      <div class="field">
+        <label for="descripcion">Descripción del problema</label>
+        <textarea id="descripcion" name="descripcion" [(ngModel)]="ticket.descripcion" #descripcion="ngModel" required maxlength="2000" rows="5" placeholder="Describe el problema y cuándo ocurre" [attr.aria-invalid]="descripcion.invalid && descripcion.touched" aria-describedby="error-descripcion"></textarea>
+        @if (descripcion.invalid && descripcion.touched) {
+          <small class="field-error" id="error-descripcion">Describe el problema, hasta 2000 caracteres.</small>
+        }
+      </div>
+      <div class="form-grid">
+        <div class="field">
+          <label for="categoria">Categoría</label>
+          <select id="categoria" name="categoria" [(ngModel)]="ticket.categoria" #categoria="ngModel" required [attr.aria-invalid]="categoria.invalid && categoria.touched" aria-describedby="error-categoria">
+            <option value="" disabled>Selecciona una categoría</option>
+            @for (opcion of categorias; track opcion) { <option [value]="opcion">{{ opcion }}</option> }
+          </select>
+          @if (categoria.invalid && categoria.touched) {
+            <small class="field-error" id="error-categoria">Selecciona una categoría.</small>
+          }
+        </div>
+        <div class="field">
+          <label for="prioridad">Prioridad</label>
+          <select id="prioridad" name="prioridad" [(ngModel)]="ticket.prioridad" required>
+            @for (opcion of prioridades; track opcion) { <option [value]="opcion">{{ opcion }}</option> }
+          </select>
+        </div>
+        <div class="field">
+          <label for="estado">Estado</label>
+          <select id="estado" name="estado" [(ngModel)]="ticket.estado" required>
+            @for (opcion of estados; track opcion) { <option [value]="opcion">{{ opcion }}</option> }
+          </select>
+        </div>
+      </div>
+      <div class="form-footer">
+        <a class="button secondary" routerLink="/tickets">Cancelar</a>
+        <button type="submit">{{ guardando() ? 'Guardando…' : (id === null ? 'Crear ticket' : 'Guardar cambios') }}</button>
+      </div>
+    </fieldset>
+  </form>
+}

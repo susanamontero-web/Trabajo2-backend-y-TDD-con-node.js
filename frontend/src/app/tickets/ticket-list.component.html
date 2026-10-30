@@ -1,0 +1,63 @@
+<div class="page-heading">
+  <div>
+    <p class="eyebrow">SOPORTE TÉCNICO</p>
+    <h1>Tickets de soporte</h1>
+    <p>Consulta y administra las solicitudes de atención.</p>
+  </div>
+  <a class="button" routerLink="/tickets/nuevo">+ Nuevo ticket</a>
+</div>
+@if (error()) {
+  <div class="alert error" role="alert">
+    {{ error() }}
+    <button class="secondary" (click)="cargar()" [disabled]="cargando()">Reintentar</button>
+  </div>
+}
+@if (mensaje()) {
+  <p class="alert success" role="status">{{ mensaje() }}</p>
+}
+<section class="panel" aria-label="Listado de tickets" [attr.aria-busy]="cargando()">
+  @if (cargando()) {
+    <p class="empty" role="status">Cargando tickets…</p>
+  } @else if (tickets().length === 0) {
+    <div class="empty">
+      @if (error()) {
+        <h2>Listado no disponible</h2>
+        <p>Vuelve a intentarlo para consultar las solicitudes.</p>
+      } @else {
+        <h2>Aún no hay tickets</h2>
+        <p>Registra la primera solicitud con el botón Nuevo ticket.</p>
+      }
+    </div>
+  } @else {
+    <div class="table-scroll">
+      <table>
+        <thead><tr>
+          <th scope="col">Ticket</th><th scope="col">Solicitante</th>
+          <th scope="col">Categoría</th><th scope="col">Prioridad</th>
+          <th scope="col">Estado</th><th scope="col">Fecha</th><th scope="col">Acciones</th>
+        </tr></thead>
+        <tbody>
+          @for (ticket of tickets(); track ticket.id) {
+            <tr>
+              <td>
+                <small>#{{ ticket.id }}</small><strong>{{ ticket.asunto }}</strong>
+                <details><summary>Ver descripción</summary><p class="description">{{ ticket.descripcion }}</p></details>
+              </td>
+              <td>{{ ticket.solicitante }}</td>
+              <td>{{ ticket.categoria }}</td>
+              <td><span class="badge" [class.high]="ticket.prioridad === 'Alta'" [class.medium]="ticket.prioridad === 'Media'">{{ ticket.prioridad }}</span></td>
+              <td><span class="badge" [class.closed]="ticket.estado === 'Cerrado'" [class.progress]="ticket.estado === 'En proceso'">{{ ticket.estado }}</span></td>
+              <td>{{ ticket.fechaRegistro | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td><div class="actions">
+                <a class="button secondary" [routerLink]="['/tickets', ticket.id, 'editar']" [attr.aria-label]="'Editar ticket ' + ticket.id">Editar</a>
+                <button class="danger" (click)="eliminar(ticket)" [disabled]="eliminando() !== null" [attr.aria-label]="'Eliminar ticket ' + ticket.id">
+                  {{ eliminando() === ticket.id ? 'Eliminando…' : 'Eliminar' }}
+                </button>
+              </div></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
